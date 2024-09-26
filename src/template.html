@@ -1,0 +1,38 @@
+{{=<< >>=}}
+<html>
+<head>
+</head>
+<body>
+<table style="float:left;">
+
+<<#teilnehmer>>
+<tr>
+<td><<& id>></td>
+<td><<& vorname>></td>
+<td><<& name>></td>
+<td><<& zelt_id>></td>
+</tr>
+<</teilnehmer>>
+
+
+</table>
+
+<table style="float:right;background-color:darkcyan;padding:5px" >
+
+<<#zelte>>
+<tr>
+<th style="background-color:black;">Zelt #<<id>></th>
+</tr>
+<<#zteilnehmer>>
+<tr>
+<td><<& vorname>></td>
+<td><<& name>></td>
+<tr>
+<</zteilnehmer>>
+<</zelte>>
+
+</table>
+
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+{{=<< >>=}}
+<html>
+<head>
+<script>
+draggedelement = null;
+function ol(){
+
+	document.getElementById("teilnehmer_table").addEventListener("dragstart", function (e){
+	//	console.log(e.clientY / e.clientHeight);
+		console.log(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount);
+		draggedelement2 = e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]
+		
+
+		draggedelement = document.createElement("tr");
+		draggedelement.appendChild(draggedelement2.children[1].cloneNode(true));
+		draggedelement.appendChild(draggedelement2.children[2].cloneNode(true));
+		
+		e.dataTransfer.setDragImage(draggedelement2,20,30);
+	});
+/*
+	document.getElementById("teilnehmer_table").addEventListener("drag", function (e){
+	//	console.log(e.clientY / e.clientHeight);
+		console.log(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount);
+		e.dataTransfer.setDragImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]); });
+*/
+	i=0;
+	for (element of document.getElementsByClassName("zelt_table")){
+		element.addEventListener("dragover", function (e){
+			console.log("over");
+			e.preventDefault();
+		//	console.log(e.clientY / e.clientHeight);
+//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
+		});
+		element.addEventListener("dragenter", function (e){
+			console.log("enter");
+			e.preventDefault();
+			e.srcElement.style="border:2px solid lightgreen;";
+			console.log(e.srcElement);
+		//	console.log(e.clientY / e.clientHeight);
+//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
+		});
+		element.addEventListener("dragleave", function (e){
+			console.log("leave");
+			e.preventDefault();
+			e.srcElement.style="border:2px solid darkcyan;";
+			console.log(e.srcElement);
+		//	console.log(e.clientY / e.clientHeight);
+//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
+		});
+		element.addEventListener("drop", function (e){
+			e.srcElement.appendChild(document.getElementById("zt" + draggedelement2.children[0].innerHTML));	
+			draggedelement2.children[3].innerHTML=e.srcElement.children[0].children[0].children[0].innerHTML.substring(6);
+			console.log("drop");
+			e.srcElement.style="border:2px solid darkcyan;";
+//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
+		});
+		i++;
+	}
+
+}
+</script>
+<style>
+
+.teilnehmer_table {
+  height: 90vh;
+  width: 100%;
+  table-layout: fixed;
+}
+.teilnehmer_table > tbody {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  height:90vh;
+}
+.teilnehmer_table > thead > tr {
+  display: block;
+}
+.teilnehmer_table > thead {
+  background: black;
+  color: #fff;
+}
+.teilnehmer_table th,
+.teilnehmer_table td {
+  padding: 5px;
+  text-align: left;
+}
+.teilnehmer_row {
+}
+.teilnehmer_row:hover {
+	background-color: darkcyan;
+}
+.zelt_table{
+	vertical-align:top;
+	border: 2px solid darkcyan;
+	float:top;
+	background-color:darkcyan;
+	padding:5px;
+	width:100% 
+}
+table {
+	font-size: 30px;
+}
+</style>
+</head>
+<body onload="ol()">
+
+<table style="height:95vh;float:center;margin:auto;width:95vw;background-color:blue">
+	<tr>
+	<td style="width:50%;background:darkred">
+	<table class="teilnehmer_table">
+<thead><tr>
+	<th>id</th><th>name</th><th>nachname</th><th>zelt</th><th><input style="height:35px" /></th>
+</tr></thead>	
+	<tbody draggable=true id="teilnehmer_table" style="overflow:auto;background-color:darkgray;float:right;width:100%;float:top">
+	<<#teilnehmer>>
+	<tr class="teilnehmer_row">
+	<td class="teilnehmer_row"><<& id>></td>
+	<td class="teilnehmer_row"><<& vorname>></td>
+	<td class="teilnehmer_row"><<& name>></td>
+	<td class="teilnehmer_row"><<& zelt_id>></td>
+	</tr>
+	<</teilnehmer>>
+	</table>
+	</td>
+	<td style="vertical-align:top;width:45%">
+
+	<table style="width:45vw;height:95vh;overflow:auto;display:block;background-color:red;">
+        <tbody>
+	<<#zelte>>
+		<tr><td style="width:50vw;">
+		<table class="zelt_table">
+            <tbody>
+            <tr>
+			<th style="width:100%;background-color:#366;pointer-events:none;"colspan=2>Zelt #<<id>></th>
+			</tr>
+			<<#zteilnehmer>>
+			<tr id="zt<<id>>">
+			<td style="width:50%;pointer-events:none"><<& vorname>></td>
+			<td style="width:50%;pointer-events:none"><<& name>></td>
+			</tr>
+			<</zteilnehmer>>
+            </tbody></table>
+		</tr></td>
+	<</zelte>>
+        </tbody>
+	</table>
+
+
+	</td>
+	</tr>
+</table>
+
+</body>
+</html>
