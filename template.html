@@ -3,60 +3,78 @@
 <head>
 <script>
 draggedelement = null;
+tid=0;
+from_id=0;
+to_id=0;
+version=<<version>>;
+function update(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+	   newversion=parseInt(xmlHttp.responseText)
+       console.log("old: "+ version+ ", new: " +newversion);
+		if (newversion != version){
+			location.reload(true);
+}
+
+    }
+};
+
+	xmlHttp.open( "GET", "/zap/update?version=4",true);
+	
+	xmlHttp.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+	xmlHttp.send(null);
+	console.log(xmlHttp.responseType);
+
+}
+setInterval(update,1500);
 function ol(){
 
 	document.getElementById("teilnehmer_table").addEventListener("dragstart", function (e){
 	//	console.log(e.clientY / e.clientHeight);
 		console.log(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount);
-		draggedelement2 = e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]
-		
-
+		draggedelement2 = document.elementsFromPoint(e.pageX, e.pageY)[0].parentElement;
+		tid = draggedelement2.children[0].innerHTML;
+		from_id = draggedelement2.children[3].innerHTML;
+		console.log(draggedelement2);
 		draggedelement = document.createElement("tr");
 		draggedelement.appendChild(draggedelement2.children[1].cloneNode(true));
 		draggedelement.appendChild(draggedelement2.children[2].cloneNode(true));
 		
 		e.dataTransfer.setDragImage(draggedelement2,20,30);
 	});
-/*
-	document.getElementById("teilnehmer_table").addEventListener("drag", function (e){
-	//	console.log(e.clientY / e.clientHeight);
-		console.log(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount);
-		e.dataTransfer.setDragImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]); });
-*/
 	i=0;
 	for (element of document.getElementsByClassName("zelt_table")){
 		element.addEventListener("dragover", function (e){
 			console.log("over");
 			e.preventDefault();
-		//	console.log(e.clientY / e.clientHeight);
-//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
 		});
 		element.addEventListener("dragenter", function (e){
 			console.log("enter");
 			e.preventDefault();
 			e.srcElement.style="border:2px solid lightgreen;";
 			console.log(e.srcElement);
-		//	console.log(e.clientY / e.clientHeight);
-//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
 		});
 		element.addEventListener("dragleave", function (e){
 			console.log("leave");
 			e.preventDefault();
 			e.srcElement.style="border:2px solid darkcyan;";
 			console.log(e.srcElement);
-		//	console.log(e.clientY / e.clientHeight);
-//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
 		});
 		element.addEventListener("drop", function (e){
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.open( "GET", "/zap/change_zelt?tid="+ tid +"&from="+ from_id +"&to="+ e.srcElement.getAttribute("name"), false);
+			xmlHttp.send(null);
 			e.srcElement.appendChild(document.getElementById("zt" + draggedelement2.children[0].innerHTML));	
 			draggedelement2.children[3].innerHTML=e.srcElement.children[0].children[0].children[0].innerHTML.substring(6);
 			console.log("drop");
 			e.srcElement.style="border:2px solid darkcyan;";
-//		datatransfer.setDrawImage(e.srcElement.children[Math.floor(e.offsetY/e.srcElement.clientHeight * e.srcElement.childElementCount)]);
+		
+			version++;	
+
 		});
 		i++;
 	}
-
 }
 </script>
 <style>
@@ -128,7 +146,7 @@ table {
         <tbody>
 	<<#zelte>>
 		<tr><td style="width:50vw;">
-		<table class="zelt_table">
+		<table class="zelt_table" name="<<id>>" >
             <tbody>
             <tr>
 			<th style="width:100%;background-color:#366;pointer-events:none;"colspan=2>Zelt #<<id>></th>
